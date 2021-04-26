@@ -3,8 +3,10 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Version>0.1.1</Version>
-    <GameVersion>2021.4.14s</GameVersion>
+    <Authors>Haoming</Authors>
     <Mappings>EoF-1141/Mappings:0.4.1</Mappings>
+    <GameVersion>2021.4.14s</GameVersion>
+    <DefineConstants>$(DefineConstants);STEAM</DefineConstants>
     <RootNamespace>RecorderClient</RootNamespace>
   </PropertyGroup>
     <ItemGroup>
@@ -12,13 +14,13 @@
     </ItemGroup>
     <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-      <PackageReference Include="Reactor.OxygenFilter.MSBuild" Version="0.3.0">
+      <PackageReference Include="Reactor.OxygenFilter.MSBuild" Version="*">
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         <PrivateAssets>all</PrivateAssets>
       </PackageReference>
     </ItemGroup>
-    <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
+    <Target Name="CopyCustomContent" AfterTargets="Reobfuscate">
         <Message Text="Second occurrence" />
-        <Copy SourceFiles="$(ProjectDir)\bin\Debug\netstandard2.1\RecorderClient.dll" DestinationFolder="$(AmongUs)/BepInEx/plugins/" />
+        <Copy SourceFiles="$(OutputPath)reobfuscated/$(AssemblyName)-$(GameVersion).dll" DestinationFolder="$(AmongUs)/BepInEx/plugins/" />
     </Target>
 </Project>
