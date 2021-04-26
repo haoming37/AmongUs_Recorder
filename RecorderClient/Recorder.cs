@@ -9,10 +9,10 @@ using Newtonsoft.Json;
 using BepInEx;
 using BepInEx.Configuration;
 using TheOtherRoles;
-using SystemTypes = BCPJLGGNHBC;
-using SwitchSystem = ABIMJJMBJJM;
-using ISystemType = JBBCJFNFOBB;
-using GameOverReason = AMGMAKBHCMN;
+// using SystemTypes = BCPJLGGNHBC;
+// using SwitchSystem = ABIMJJMBJJM;
+// using ISystemType = JBBCJFNFOBB;
+// using GameOverReason = AMGMAKBHCMN;
 
 namespace RecorderClient{
     public sealed class Recorder{
@@ -51,9 +51,9 @@ namespace RecorderClient{
                 p.x = player.transform.position.x;
                 p.y = player.transform.position.y;
                 p.z = player.transform.position.z;
-                p.isDead = player.PPMOEEPBHJO.IAGJEKLJCCI;
-                p.colorId = player.PPMOEEPBHJO.IMMNCAGJJJC;
-                p.playerId = player.PPMOEEPBHJO.FNPNJHNKEBK;
+                p.isDead = player.Data.IsDead;
+                p.colorId = player.Data.ColorId;
+                p.playerId = player.Data.PlayerId;
                 p.name = player.name;
                 List<RoleInfo> roles = RoleInfo.getRoleInfoForPlayer(player);
                 foreach(RoleInfo rol in roles){
@@ -119,9 +119,9 @@ namespace RecorderClient{
                 p.x = player.transform.position.x;
                 p.y = player.transform.position.y;
                 p.z = player.transform.position.z;
-                p.isDead = player.PPMOEEPBHJO.IAGJEKLJCCI;
-                p.colorId = player.PPMOEEPBHJO.IMMNCAGJJJC;
-                p.playerId = player.PPMOEEPBHJO.FNPNJHNKEBK;
+                p.isDead = player.Data.IsDead;
+                p.colorId = player.Data.ColorId;
+                p.playerId = player.Data.PlayerId;
                 p.name = player.name;
                 List<RoleInfo> roles = RoleInfo.getRoleInfoForPlayer(player);
                 foreach(RoleInfo rol in roles){

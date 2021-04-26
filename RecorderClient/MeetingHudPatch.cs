@@ -16,13 +16,4 @@ namespace RecorderClient {
             Task t =  Recorder.NewDay();
         }
     }
-
-    //FOLNJDKNFOF⇨CoSendSceneChange
-    [HarmonyPatch(typeof(InnerNet.InnerNetClient), nameof(InnerNet.InnerNetClient.FOLNJDKNFOF))]
-    public class CoSendSceneChangePatch{
-        public static void Postfix(string JLNFHGBCMCG){
-            Recorder.LogInfo("CoSendSceneChange: " + JLNFHGBCMCG);
-
-        }
-    }
 }

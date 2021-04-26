@@ -31,12 +31,12 @@ namespace RecorderClient
             Port = Config.Bind("Custom", "Custom Server Port", (ushort)22023);
 
             IRegionInfo customRegion = new DnsRegionInfo(Ip.Value, "HaomingAWS", StringNames.NoTranslation, Ip.Value, Port.Value).Cast<IRegionInfo>();
-            ServerManager serverManager = DestroyableSingleton<ServerManager>.CHNDKKBEIDG;
+            ServerManager serverManager = DestroyableSingleton<ServerManager>.Instance;
             IRegionInfo[] regions = ServerManager.DefaultRegions;
 
             regions = regions.Concat(new IRegionInfo[] { customRegion }).ToArray();
             ServerManager.DefaultRegions = regions;
-            serverManager.AGFAPIKFOFF = regions;
+            serverManager.AvailableRegions = regions;
             serverManager.SaveServers();
 
             // リプレイ保存機能スタート
@@ -49,7 +49,7 @@ namespace RecorderClient
     }
 
     // 切断時にBANされるのを無効化する（デバッグ時によく実施するので）
-    [HarmonyPatch(typeof(IAJICOPDKHA), nameof(IAJICOPDKHA.LEHPLHFNDLM), MethodType.Getter)]
+    [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.AmBanned), MethodType.Getter)]
     public static class AmBannedPatch
     {
         public static void Postfix(out bool __result)

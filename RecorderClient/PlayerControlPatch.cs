@@ -7,19 +7,19 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-using SystemTypes = BCPJLGGNHBC;
-using Palette = BLMBFIODBKL;
-using Constants = LNCOKMACBKP;
-using PhysicsHelpers = FJFJIDCFLDJ;
-using DeathReason = EGHDCAKGMKI;
-using GameOptionsData = CEIOGGEDKAN;
-using Effects = AEOEPNHOJDP;
+// using SystemTypes = BCPJLGGNHBC;
+// using Palette = BLMBFIODBKL;
+// using Constants = LNCOKMACBKP;
+// using PhysicsHelpers = FJFJIDCFLDJ;
+// using DeathReason = EGHDCAKGMKI;
+// using GameOptionsData = CEIOGGEDKAN;
+// using Effects = AEOEPNHOJDP;
 
 namespace RecorderClient {
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.FixedUpdate))]
     public static class PlayerControlFixedUpdatePatch{
         public static void Prefix(PlayerControl __instance) {
-            if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GCDONLGCMIL.Started) return;
+            if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
         }
         public static void Postfix(PlayerControl __instance) {
             return;
