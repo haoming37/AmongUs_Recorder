@@ -103,7 +103,7 @@ namespace RecorderClient{
                 }
             }
             TimerCallback tc = new TimerCallback(OnTimedEvent);
-            _instance.timer = new Timer(tc, null, 0, 100);
+            _instance.timer = new Timer(tc, null, 0, 250);
             _instance.isRunning = true;
             return;
         }
@@ -146,9 +146,11 @@ namespace RecorderClient{
             _instance.frames.Add(frame);
 
             // 10フレーム以上溜まっていたらPOSTする
-            if(_instance.frames.Count >= 100 || force)
+            if(_instance.frames.Count >= 30 || force)
             {
-                string json =JsonConvert.SerializeObject(_instance.frames);
+                List<Frame> frames = new List<Frame>(_instance.frames);
+                _instance.frames.Clear();
+                string json =JsonConvert.SerializeObject(frames);
                 using(var client = new HttpClient())
                 {
                     string url = _instance.url + _instance.gameId.ToString() + "/days/" + _instance.dayId.ToString() + "/frames/";
