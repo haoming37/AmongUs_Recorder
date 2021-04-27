@@ -17,12 +17,16 @@ font_overlay = ImageFont.truetype('meiryob.ttc', 16, index=2)
 # Amongus座標系の1の重みがおおよそ画像での12pixel
 # Airship画像の場合の位置
 # OFFSET Airship(470.5, 330) 重み 18
-# OFFSET Polus(50, 100) 重み16
+# OFFSET Polus(50, 100) 重み26
 def convy(y):
+    return int(220 - y*26) # skeld
+    return int(750 - y*26) # mira
     return int(100 - y*26) # polus
     return int(1.5*(220 - (y*12))) # airship
 
 def convx(x):
+    return int(670 + 26*x) # skeld
+    return int(375 + 26*x) # mira
     return int(50 + 26*x) # polus
     return int(1.5*((x*12) + 315)) # airship
     
@@ -126,7 +130,7 @@ def main():
 
     # サーバーからJSONファイルを読み込み
     url = 'http://localhost:8000/recorder/games/'
-    gameId = 79
+    gameId = 87
     res = requests.get(url + str(gameId) + "/")
     content = res.content.decode()
     content = json.loads(content)
@@ -152,9 +156,9 @@ def main():
         org_img = cv2.imread('map/airship.png')
     elif mapName == "PolusShip(Clone)":
         org_img = cv2.imread('map/polus.png')
-    elif mapName == "":
+    elif mapName == "SkeldShip(Clone)":
         org_img = cv2.imread('map/skeld.png')
-    elif mapName == "":
+    elif mapName == "MiraShip(Clone)":
         org_img = cv2.imread('map/mira.png')
     
     org_img = cv2.cvtColor(org_img, cv2.COLOR_BGR2RGB)
