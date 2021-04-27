@@ -4,6 +4,7 @@ from rest_framework.parsers import JSONParser
 from recorderapp.models import Game, Day, Frame
 from recorderapp.serializers import GameSerializer, DaySerializer, FrameSerializer
 import json
+import threading
 
 # path('games/', views.games),
 @csrf_exempt
@@ -34,7 +35,7 @@ def games_id(request, gameId):
         serializer = GameSerializer(game, data=data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data)
+            return JsonResponse(serializer.data, status=200)
         return JsonResponse(serializer.errors, status=400)
 
 
@@ -46,7 +47,6 @@ def days(request, gameId):
         days = []
         dayIdList = json.loads(game.days)
         for dayId in dayIdList:
-            print(dayId)
             day = Day.objects.get(id=dayId)
             day = DaySerializer(day)
             days.append(day.data)
@@ -55,7 +55,6 @@ def days(request, gameId):
     if request.method == 'POST':
         data = JSONParser().parse(request)
         days = json.loads(game.days)
-        print(days)
         data['dayId'] = len(days) + 1
         serializer = DaySerializer(data=data)
         if serializer.is_valid():
@@ -80,10 +79,14 @@ def days_id(request, gameId, dayId):
 
     if request.method == 'PUT':
         data = JSONParser().parse(request)
+        print(day.id)
+        print(data['deadPlayers'])
+        print(data['exiledPlayers'])
+        print(type(data['numFrames']))
         serializer = DaySerializer(day, data=data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data, status=201)
+            return JsonResponse(serializer.data, status=200)
         return JsonResponse(serializer.errors, status=400)
     
     if request.method == 'DELETE':
@@ -130,7 +133,6 @@ def frames(request, gameId, dayId):
                 framesList.append(serializer.data['id'])
                 day.frames = json.dumps(framesList)
                 day.numFrames = len(framesList)
-                print(day.numFrames)
                 day.save()
             else:
                 flag = False
@@ -157,7 +159,7 @@ def frames_id(request, gameId, dayId, frameId):
         serializer = FrameSerializer(frame, data=data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data, status=201)   
+            return JsonResponse(serializer.data, status=200)   
         return JsonResponse(serializer.errors, status=400)
 
 

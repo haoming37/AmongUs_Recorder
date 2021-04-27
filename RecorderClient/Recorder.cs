@@ -18,6 +18,7 @@ namespace RecorderClient{
         public static Recorder GetInstance() { return _instance;}
         public string url = "http://localhost:8000/recorder/games/";
         private bool isRunning = false;
+        public bool isGameEnd = false;
         private Timer timer;
         private int gameId = 0;
         private int dayId = 0;
@@ -36,6 +37,7 @@ namespace RecorderClient{
         public static async Task NewGame(string map){
             if (!_instance.isServerActive) return;
             LogInfo("NewGame");
+            _instance.isGameEnd = false;
             _instance.deadPlayers = new List<int>();
             _instance.exiledPlayers = new List<int>();
             Game game = new Game();
@@ -103,19 +105,18 @@ namespace RecorderClient{
                 }
             }
             TimerCallback tc = new TimerCallback(OnTimedEvent);
-            _instance.timer = new Timer(tc, null, 0, 250);
+            _instance.timer = new Timer(tc, null, 0, 100);
             _instance.isRunning = true;
             return;
         }
         private static void OnTimedEvent(Object o){
-            Task t = NewFrame();
-            t.Wait();
+            Task.Run(() => NewFrame()).Wait();
         }
         
         public static async Task NewFrame(bool force=false)
         {
             if (!_instance.isServerActive) return;
-            LogInfo("NewFrame");
+            //LogInfo("NewFrame");
             Frame frame = new Frame();
 
             // プレイヤー一覧取得
@@ -145,31 +146,35 @@ namespace RecorderClient{
             frame.eventId = 0;
             _instance.frames.Add(frame);
 
-            // 10フレーム以上溜まっていたらPOSTする
-            if(_instance.frames.Count >= 30 || force)
+            // 100フレーム以上溜まっていたらPOSTする
+            if(_instance.frames.Count >= 100 || force)
             {
-                List<Frame> frames = new List<Frame>(_instance.frames);
-                _instance.frames.Clear();
-                string json =JsonConvert.SerializeObject(frames);
-                using(var client = new HttpClient())
-                {
-                    string url = _instance.url + _instance.gameId.ToString() + "/days/" + _instance.dayId.ToString() + "/frames/";
-                    var content = new StringContent(json, Encoding.UTF8);
-                    var response = await client.PostAsync(url, content);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string data = await response.Content.ReadAsStringAsync();
-                        ResFrame retFrame = JsonConvert.DeserializeObject<ResFrame>(data);
-                        _instance.frameId = retFrame.frameId;
-                    }
-                    else 
-                    {
-                        _instance.isServerActive = false;
-                    }
-                }
-                _instance.frames.Clear();
+                await UploadFrame();
             }
             return;
+        }
+
+        private static async Task UploadFrame()
+        {
+            List<Frame> frames = new List<Frame>(_instance.frames);
+            _instance.frames.Clear();
+            string json =JsonConvert.SerializeObject(frames);
+            using(var client = new HttpClient())
+            {
+                string url = _instance.url + _instance.gameId.ToString() + "/days/" + _instance.dayId.ToString() + "/frames/";
+                var content = new StringContent(json, Encoding.UTF8);
+                var response = await client.PostAsync(url, content);
+                if (response.IsSuccessStatusCode)
+                {
+                    string data = await response.Content.ReadAsStringAsync();
+                    ResFrame retFrame = JsonConvert.DeserializeObject<ResFrame>(data);
+                    _instance.frameId = retFrame.frameId;
+                }
+                else 
+                {
+                    _instance.isServerActive = false;
+                }
+            }
         }
 
         public static async Task EndGame(GameOverReason gameOverReason)
@@ -199,6 +204,7 @@ namespace RecorderClient{
                 }
             }
         }
+
         public static async Task EndDay()
         {
             if (!_instance.isServerActive) return;
@@ -222,9 +228,14 @@ namespace RecorderClient{
                     ResDay  retDay = JsonConvert.DeserializeObject<ResDay>(data);
                     retDay.deadPlayers = JsonConvert.SerializeObject(_instance.deadPlayers);
                     retDay.exiledPlayers = JsonConvert.SerializeObject(_instance.exiledPlayers);
+                    LogInfo("Update deadPlayers: " + retDay.deadPlayers );
+                    LogInfo("Update exiledPlayers: " + retDay.exiledPlayers );
                     string json = JsonConvert.SerializeObject(retDay);
                     var content = new StringContent(json, Encoding.UTF8);
                     response = await client.PutAsync(url, content);
+                    if(! response.IsSuccessStatusCode){
+                        LogInfo("Error:Update Day");
+                    }
                 }
                 else 
                 {

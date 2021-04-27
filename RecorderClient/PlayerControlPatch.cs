@@ -42,6 +42,10 @@ namespace RecorderClient {
         {
             Recorder.LogInfo("PlayerControlMurderPlayerPatch");
             Recorder.GetInstance().deadPlayers.Add(DGDGDKCCKHJ.PlayerId);
+            if(Recorder.GetInstance().isGameEnd)
+            {
+                Task.Run(() => Recorder.EndDay());
+            }
         }
     }
 }

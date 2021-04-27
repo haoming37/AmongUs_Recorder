@@ -16,7 +16,7 @@ namespace RecorderClient{
         public static void Postfix(AmongUsClient __instance, ref GameOverReason NEPMFBMGGLF, bool FBEKDLNKNLL) {
             Recorder.LogInfo("OnGameEndPatch");
             GameOverReason gameOverReason = NEPMFBMGGLF;
-            Task t = Recorder.EndGame(gameOverReason);
+            Task.Run(() => Recorder.EndGame(gameOverReason));
             return;
         }
     }

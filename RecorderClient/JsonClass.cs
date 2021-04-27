@@ -78,7 +78,7 @@ namespace RecorderClient{
 
     }
     public class ResDay: Day{
-        public string numFrames{get; set;}
+        public int numFrames{get; set;}
         public int dayId{get; set;}
     }
     

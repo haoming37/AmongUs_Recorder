@@ -26,7 +26,15 @@ data['exiledPlayers'] = '[]'
 #data['players'] = '[]'
 #data['customField'] = 'aaaa'
 
+# PUT days
+url = 'http://localhost:8000/recorder/games/68/days/1/'
+data = {}
+data['dayId'] = 1
+data['numFrames'] = 194
+data['deadPlayers'] = '[1]'
+data['exiledPlayers'] = '[]'
+
 print(data)
 data = json.dumps(data)
-ret = requests.post(url, data=data)
+ret = requests.put(url, data=data)
 print(ret)

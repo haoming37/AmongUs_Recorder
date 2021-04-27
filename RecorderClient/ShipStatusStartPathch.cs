@@ -6,7 +6,7 @@ namespace RecorderClient {
     public static class ShipStatusStartPatch{
         public static void Prefix(){
             Recorder.LogInfo("ShipStatusStartPatch");
-            Task t = Recorder.NewGame(ShipStatus.Instance.name);
+            Task.Run(() => Recorder.NewGame(ShipStatus.Instance.name));
             return;
         }
 

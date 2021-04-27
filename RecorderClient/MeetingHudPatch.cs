@@ -6,14 +6,14 @@ namespace RecorderClient {
     public class MeetingHudAwakePatch{
         public static void Postfix(){
             Recorder.LogInfo("MeetingHudAwakePatch");
-            Task t = Recorder.EndDay();
+            Task.Run(() => Recorder.EndDay());
         }
     }
     [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Close))]
     public class MeetingHudClosePatch{
         public static void Postfix(){
             Recorder.LogInfo("MeetingHudClosePatch");
-            Task t =  Recorder.NewDay();
+            Task.Run(() => Recorder.NewDay());
         }
     }
 }

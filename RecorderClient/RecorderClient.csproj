@@ -9,18 +9,17 @@
     <DefineConstants>$(DefineConstants);STEAM</DefineConstants>
     <RootNamespace>RecorderClient</RootNamespace>
   </PropertyGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\TheOtherRoles\Source Code\TheOtherRoles.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-      <PackageReference Include="Reactor.OxygenFilter.MSBuild" Version="*">
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        <PrivateAssets>all</PrivateAssets>
-      </PackageReference>
-    </ItemGroup>
-    <Target Name="CopyCustomContent" AfterTargets="Reobfuscate">
-        <Message Text="Second occurrence" />
-        <Copy SourceFiles="$(OutputPath)reobfuscated/$(AssemblyName)-$(GameVersion).dll" DestinationFolder="$(AmongUs)/BepInEx/plugins/" />
-    </Target>
+  <ItemGroup>
+    <ProjectReference Include="..\TheOtherRoles\Source Code\TheOtherRoles.csproj" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Reactor.OxygenFilter.MSBuild" Version="0.3.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <Target Name="CopyCustomContent" AfterTargets="Reobfuscate">
+      <Message Text="Second occurrence" />
+      <Copy SourceFiles="$(OutputPath)reobfuscated/$(AssemblyName)-$(GameVersion).dll" DestinationFolder="$(AmongUs)/BepInEx/plugins/" />
+  </Target>
 </Project>
