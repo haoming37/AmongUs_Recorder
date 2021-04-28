@@ -18,17 +18,26 @@ font_overlay = ImageFont.truetype('meiryob.ttc', 16, index=2)
 # Airship画像の場合の位置
 # OFFSET Airship(470.5, 330) 重み 18
 # OFFSET Polus(50, 100) 重み26
-def convy(y):
-    return int(220 - y*26) # skeld
-    return int(750 - y*26) # mira
-    return int(100 - y*26) # polus
-    return int(1.5*(220 - (y*12))) # airship
+def convy(y, mapName):
+    if mapName == "Airship(Clone)":
+        return int(1.5*(220 - (y*12))) # airship
+    elif mapName == "PolusShip(Clone)":
+        return int(100 - y*26) # polus
+    elif mapName == "SkeldShip(Clone)":
+        return int(220 - y*26) # skeld
+    elif mapName == "MiraShip(Clone)":
+        return int(750 - y*26) # mira
+    
 
-def convx(x):
-    return int(670 + 26*x) # skeld
-    return int(375 + 26*x) # mira
-    return int(50 + 26*x) # polus
-    return int(1.5*((x*12) + 315)) # airship
+def convx(x, mapName):
+    if mapName == "Airship(Clone)":
+        return int(1.5*((x*12) + 315)) # airship
+    elif mapName == "PolusShip(Clone)":
+        return int(50 + 26*x) # polus
+    elif mapName == "SkeldShip(Clone)":
+        return int(670 + 26*x) # skeld
+    elif mapName == "MiraShip(Clone)":
+        return int(375 + 26*x) # mira
     
 def getColorById(colorId):
     return {
@@ -130,7 +139,7 @@ def main():
 
     # サーバーからJSONファイルを読み込み
     url = 'http://localhost:8000/recorder/games/'
-    gameId = 87
+    gameId = 117
     res = requests.get(url + str(gameId) + "/")
     content = res.content.decode()
     content = json.loads(content)
@@ -152,7 +161,8 @@ def main():
     # マップ画像読み込み
     game = content
     mapName = game['mapName']
-    if mapName == "AirShip(Clone)":
+    print(mapName)
+    if mapName == "Airship(Clone)":
         org_img = cv2.imread('map/airship.png')
     elif mapName == "PolusShip(Clone)":
         org_img = cv2.imread('map/polus.png')
@@ -171,12 +181,13 @@ def main():
 
     for day in game['days']:
 
-        # 投票勝利の場合は最終日をスキップする
         index = game['days'].index(day)
         gameOverReason = game['gameOverReason']
-        if index + 1 == len(game['days']):
-            if gameOverReason == GameOverReason.HumansByVote or GameOverReason.ImpostorByVote:
-                continue
+        # 投票勝利の場合は最終日をスキップする
+        # if index + 1 == len(game['days']):
+        #     if gameOverReason == GameOverReason.HumansByVote or GameOverReason.ImpostorByVote:
+        #         # sheriffキルで終了してもこの分岐に入ってしまうっぽいのでcontinueできない
+        #         # continue
             
         # この日に死んだプレイヤーの場所を保持する
         deadPlayers = {}
@@ -218,8 +229,8 @@ def main():
                 role = player['role']
                 name = player['name']
                 playerid = player['playerId']
-                x = convx(player['x'])
-                y = convy(player['y'])
+                x = convx(player['x'], mapName)
+                y = convy(player['y'], mapName)
                 center = (x, y)
 
                 # オーバーレイにプレイヤー情報を追加
@@ -263,6 +274,33 @@ def main():
             draw = ImageDraw.Draw(overlay)
             draw.rectangle([(0,0), (500,250)], fill=(255,255,255,100), outline=(255,255,255,255), width=2)
             draw.text((10,10), info, font=font_overlay, fill=(0,0,0,255))
+
+            # サボタージュ状況をオーバーレイに描画
+            text =''
+            isSabotage = False
+            customField = json.loads(frame['customField'])
+            if customField['commsActive']:
+                print('comms')
+                text +='COMMS発生中\n'
+                isSabotage = True
+            if customField['oxyActive']:
+                print('o2')
+                text += 'O2発生中\n'
+                isSabotage = True
+            if customField['reactorActive']:
+                print('reactor')
+                text += 'リアクター発生中\n'
+                isSabotage = True
+            if customField['lightsActive']:
+                print('fix lights')
+                text += '停電発生中\n'
+                isSabotage = True
+
+            if isSabotage:
+                draw.rectangle([(src.size[0]-500,src.size[1]-100), (src.size[0],src.size[1])], fill=(255,0,0,100), outline=(255,255,255,255), width=2)
+                draw.text([src.size[0]-490, src.size[1]-90], text, font=font_overlay, fill=(0,0,0,255))
+
+            # オーバーレイと画像を合成
             src = Image.alpha_composite(src, overlay)
 
             # 動画に書き込み

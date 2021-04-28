@@ -8,6 +8,10 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using BepInEx;
 using BepInEx.Configuration;
+using BepInEx.IL2CPP;
+using HarmonyLib;
+using UnityEngine;
+using Hazel;
 using TheOtherRoles;
 
 namespace RecorderClient{
@@ -26,6 +30,8 @@ namespace RecorderClient{
         private List<Frame> frames = new List<Frame>();
         public List<int> exiledPlayers = new List<int>();
         public List<int> deadPlayers = new List<int>();
+        public CustomField cf = new CustomField();
+        public List<Player> players = new List<Player>();
         public Game game = new Game();
 
         public static void LogInfo(string msg){
@@ -35,7 +41,7 @@ namespace RecorderClient{
         }
         
         public static async Task NewGame(string map){
-            if (!_instance.isServerActive) return;
+            if(!_instance.isServerActive) return;
             LogInfo("NewGame");
             _instance.isGameEnd = false;
             _instance.deadPlayers = new List<int>();
@@ -109,49 +115,50 @@ namespace RecorderClient{
             _instance.isRunning = true;
             return;
         }
-        private static void OnTimedEvent(Object o){
-            Task.Run(() => NewFrame()).Wait();
+        private static void OnTimedEvent(System.Object o){
+            NewFrame();
         }
         
-        public static async Task NewFrame(bool force=false)
+        public static void NewFrame(bool force=false)
         {
             if (!_instance.isServerActive) return;
             //LogInfo("NewFrame");
             Frame frame = new Frame();
 
-            // プレイヤー一覧取得
-            List<Player> players = new List<Player>();
-            foreach(PlayerControl player in PlayerControl.AllPlayerControls)
-            {
-                Player p = new Player();
-                p.x = player.transform.position.x;
-                p.y = player.transform.position.y;
-                p.z = player.transform.position.z;
-                p.isDead = player.Data.IsDead;
-                p.colorId = player.Data.ColorId;
-                p.playerId = player.Data.PlayerId;
-                p.name = player.name;
-                List<RoleInfo> roles = RoleInfo.getRoleInfoForPlayer(player);
-                foreach(RoleInfo rol in roles){
-                    if(p.role.Length != 0){
-                        p.role +=", ";
-                    }
-                    p.role += rol.name;
-                }
-                players.Add(p);
-            }
-            string playerJson = JsonConvert.SerializeObject(players);
+            // プレイヤー状態取得
+            string playerJson = JsonConvert.SerializeObject(_instance.players);
+
+            // サボタージュ状態取得
+            string cfJson = JsonConvert.SerializeObject(_instance.cf);
+
+            // フレームクラスに代入
+            frame.customField = cfJson;
             frame.players = playerJson;
             frame.time = DateTime.Now;
             frame.eventId = 0;
             _instance.frames.Add(frame);
 
-            // 100フレーム以上溜まっていたらPOSTする
-            if(_instance.frames.Count >= 100 || force)
+            // 50フレーム以上溜まっていたらPOSTする
+            if(_instance.frames.Count >= 50 || force)
             {
-                await UploadFrame();
+                Task t = Task.Run(() => UploadFrame());
+
+                // EndDayから予備出された強制出力の時は同期処理とする
+                if(force)
+                {
+                    if(t.Wait(10000)){
+                        LogInfo("Frame強制アップロード成功");
+                    }else{
+                        LogInfo("Frame強制アップロード失敗");
+                    }
+                }
             }
             return;
+        }
+
+        private static void UploadFrameThread(){
+            Task t = Task.Run(() => UploadFrame());
+            t.Wait();
         }
 
         private static async Task UploadFrame()
@@ -164,7 +171,7 @@ namespace RecorderClient{
                 string url = _instance.url + _instance.gameId.ToString() + "/days/" + _instance.dayId.ToString() + "/frames/";
                 var content = new StringContent(json, Encoding.UTF8);
                 var response = await client.PostAsync(url, content);
-                if (response.IsSuccessStatusCode)
+                if(response.IsSuccessStatusCode)
                 {
                     string data = await response.Content.ReadAsStringAsync();
                     ResFrame retFrame = JsonConvert.DeserializeObject<ResFrame>(data);
@@ -179,7 +186,7 @@ namespace RecorderClient{
 
         public static async Task EndGame(GameOverReason gameOverReason)
         {
-            if (!_instance.isServerActive) return;
+            if(!_instance.isServerActive) return;
             LogInfo("EndGame");
             // Dayを終了
             await EndDay();
@@ -207,7 +214,7 @@ namespace RecorderClient{
 
         public static async Task EndDay()
         {
-            if (!_instance.isServerActive) return;
+            if(!_instance.isServerActive) return;
             LogInfo("EndDay");
             // フレームキャプチャの定期実行を停止
             if(_instance.isRunning){
@@ -215,7 +222,7 @@ namespace RecorderClient{
                 _instance.isRunning = false;
             }
             // 溜めていたフレームを強制アップロード
-            await NewFrame(true);
+            NewFrame(true);
 
             // 死んだプレイヤーと追放されたプレイヤーを更新
             using(var client = new HttpClient())

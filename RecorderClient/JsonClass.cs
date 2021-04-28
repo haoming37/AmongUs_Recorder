@@ -18,7 +18,7 @@ namespace RecorderClient{
         Communications,
         Reactor,
         O2,
-        Electrical
+        Light
     }
     public class Player{
         public string name{ get; set;}
@@ -40,13 +40,27 @@ namespace RecorderClient{
             y = 0.0f;
             z = 0.0f;
         }
+    } 
+    public class CustomField{
+        public bool commsActive{get; set;}
+        public bool oxyActive{get; set;}
+        public bool reactorActive{get; set;}
+        public bool lightsActive{get; set;}
+        public CustomField(){
+            commsActive = false;
+            oxyActive = false;
+            reactorActive = false;
+            lightsActive = false;
+        }
     }
     public class Frame{
         public int eventId{get; set;}
         public string players{get; set;}
+        public string customField{get; set;}
         public DateTime time{get; set;}
         public Frame(){
             players = "[]";
+            customField = "";
             time = DateTime.Now;
             eventId = 0;
         }
@@ -75,8 +89,8 @@ namespace RecorderClient{
     public class ResGame:Game{
         public int numDays{get; set;}
         public int id{get; set;}
-
     }
+
     public class ResDay: Day{
         public int numFrames{get; set;}
         public int dayId{get; set;}
