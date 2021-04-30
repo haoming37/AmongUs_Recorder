@@ -27,7 +27,7 @@ namespace RecorderClient {
     public static class PlayerControlFixedUpdatePatch{
         public static void Prefix(PlayerControl __instance) {
             if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
-            Recorder.LogInfo("PlayerControlFixedUpdatePatch");
+            //Recorder.LogInfo("PlayerControlFixedUpdatePatch");
 
             // プレイヤー一覧取得
             List<Player> players = new List<Player>();

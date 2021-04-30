@@ -11,7 +11,7 @@ using Logger = BepInEx.Logging.Logger;
 
 namespace RecorderClient
 {
-    [BepInPlugin(Id)]
+    [BepInPlugin(Id, "Replay Recorder", "1.0.1")]
     [BepInProcess("Among Us.exe")]
     [BepInDependency("me.eisbison.theotherroles")]
     public class ReplayPlugin : BasePlugin

@@ -73,19 +73,19 @@ def getAliveImageById(colorId):
         8: cv2.imread('emojis/aupurple.png', cv2.IMREAD_UNCHANGED),
         9: cv2.imread('emojis/aubrown.png', cv2.IMREAD_UNCHANGED),
         10: cv2.imread('emojis/aucyan.png', cv2.IMREAD_UNCHANGED),
-        11:  cv2.imread('emojis/aulime.png', cv2.IMREAD_UNCHANGED),
-        12: cv2.imread('emojis/aured.png', cv2.IMREAD_UNCHANGED),
-        13: cv2.imread('emojis/aublue.png', cv2.IMREAD_UNCHANGED),
-        14: cv2.imread('emojis/aupink.png', cv2.IMREAD_UNCHANGED),
-        15: cv2.imread('emojis/augreen.png', cv2.IMREAD_UNCHANGED),
-        16: cv2.imread('emojis/auorange.png', cv2.IMREAD_UNCHANGED),
-        17: cv2.imread('emojis/auyellow.png', cv2.IMREAD_UNCHANGED),
-        18: cv2.imread('emojis/aublack.png', cv2.IMREAD_UNCHANGED),
-        19: cv2.imread('emojis/auwhite.png', cv2.IMREAD_UNCHANGED),
-        20: cv2.imread('emojis/aupurple.png', cv2.IMREAD_UNCHANGED),
-        21: cv2.imread('emojis/aubrown.png', cv2.IMREAD_UNCHANGED),
-        22: cv2.imread('emojis/aucyan.png', cv2.IMREAD_UNCHANGED),
-        23:  cv2.imread('emojis/aulime.png', cv2.IMREAD_UNCHANGED),
+        11: cv2.imread('emojis/aulime.png', cv2.IMREAD_UNCHANGED),
+        12: cv2.imread('emojis/ausalmon.png', cv2.IMREAD_UNCHANGED),
+        13: cv2.imread('emojis/aubordeaux.png', cv2.IMREAD_UNCHANGED),
+        14: cv2.imread('emojis/auolive.png', cv2.IMREAD_UNCHANGED),
+        15: cv2.imread('emojis/auturqoise.png', cv2.IMREAD_UNCHANGED),
+        16: cv2.imread('emojis/aumint.png', cv2.IMREAD_UNCHANGED),
+        17: cv2.imread('emojis/aulavender.png', cv2.IMREAD_UNCHANGED),
+        18: cv2.imread('emojis/aunougat.png', cv2.IMREAD_UNCHANGED),
+        19: cv2.imread('emojis/aupeach.png', cv2.IMREAD_UNCHANGED),
+        20: cv2.imread('emojis/auwasabi.png', cv2.IMREAD_UNCHANGED),
+        21: cv2.imread('emojis/auhotpink.png', cv2.IMREAD_UNCHANGED),
+        22: cv2.imread('emojis/augrey.png', cv2.IMREAD_UNCHANGED),
+        23: cv2.imread('emojis/aupetrol.png', cv2.IMREAD_UNCHANGED),
     }.get(colorId)
 
 def getDeadImageById(colorId):
@@ -102,18 +102,18 @@ def getDeadImageById(colorId):
         9: cv2.imread('emojis/aubrowndead.png', cv2.IMREAD_UNCHANGED),
         10: cv2.imread('emojis/aucyandead.png', cv2.IMREAD_UNCHANGED),
         11: cv2.imread('emojis/aulimedead.png', cv2.IMREAD_UNCHANGED),
-        12: cv2.imread('emojis/aureddead.png', cv2.IMREAD_UNCHANGED),
-        13: cv2.imread('emojis/aubluedead.png', cv2.IMREAD_UNCHANGED),
-        14: cv2.imread('emojis/aupinkdead.png', cv2.IMREAD_UNCHANGED),
-        15: cv2.imread('emojis/augreendead.png', cv2.IMREAD_UNCHANGED),
-        16: cv2.imread('emojis/auorangedead.png', cv2.IMREAD_UNCHANGED),
-        17: cv2.imread('emojis/auyellowdead.png', cv2.IMREAD_UNCHANGED),
-        18: cv2.imread('emojis/aublackdead.png', cv2.IMREAD_UNCHANGED),
-        19: cv2.imread('emojis/auwhitedead.png', cv2.IMREAD_UNCHANGED),
-        20: cv2.imread('emojis/aupurpledead.png', cv2.IMREAD_UNCHANGED),
-        21: cv2.imread('emojis/aubrowndead.png', cv2.IMREAD_UNCHANGED),
-        22: cv2.imread('emojis/aucyandead.png', cv2.IMREAD_UNCHANGED),
-        23:  cv2.imread('emojis/aulimedead.png', cv2.IMREAD_UNCHANGED),
+        12: cv2.imread('emojis/ausalmondead.png', cv2.IMREAD_UNCHANGED),
+        13: cv2.imread('emojis/aubordeauxdead.png', cv2.IMREAD_UNCHANGED),
+        14: cv2.imread('emojis/auolivedead.png', cv2.IMREAD_UNCHANGED),
+        15: cv2.imread('emojis/auturqoisedead.png', cv2.IMREAD_UNCHANGED),
+        16: cv2.imread('emojis/aumintdead.png', cv2.IMREAD_UNCHANGED),
+        17: cv2.imread('emojis/aulavenderdead.png', cv2.IMREAD_UNCHANGED),
+        18: cv2.imread('emojis/aunougatdead.png', cv2.IMREAD_UNCHANGED),
+        19: cv2.imread('emojis/aupeachdead.png', cv2.IMREAD_UNCHANGED),
+        20: cv2.imread('emojis/auwasabidead.png', cv2.IMREAD_UNCHANGED),
+        21: cv2.imread('emojis/auhotpinkdead.png', cv2.IMREAD_UNCHANGED),
+        22: cv2.imread('emojis/augreydead.png', cv2.IMREAD_UNCHANGED),
+        23: cv2.imread('emojis/aupetroldead.png', cv2.IMREAD_UNCHANGED),
     }.get(colorId)
 
 def getTextPos(pos, length):
@@ -139,7 +139,7 @@ def main():
 
     # サーバーからJSONファイルを読み込み
     url = 'http://localhost:8000/recorder/games/'
-    gameId = 117
+    gameId = 132
     res = requests.get(url + str(gameId) + "/")
     content = res.content.decode()
     content = json.loads(content)
@@ -170,6 +170,7 @@ def main():
         org_img = cv2.imread('map/skeld.png')
     elif mapName == "MiraShip(Clone)":
         org_img = cv2.imread('map/mira.png')
+
     
     org_img = cv2.cvtColor(org_img, cv2.COLOR_BGR2RGB)
 
@@ -177,7 +178,7 @@ def main():
     # 動画生成準備
     fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
     # video = cv2.VideoWriter('video.mp4', fourcc, 20.0, (1200, 638))
-    video = cv2.VideoWriter('video.mp4', fourcc, 20.0, (1280, 720))
+    video = cv2.VideoWriter(str(gameId) + '.mp4', fourcc, 20.0, (1280, 720))
 
     for day in game['days']:
 
@@ -272,7 +273,7 @@ def main():
             # オーバーレイを描画
             overlay = Image.new('RGBA', src.size)
             draw = ImageDraw.Draw(overlay)
-            draw.rectangle([(0,0), (500,250)], fill=(255,255,255,100), outline=(255,255,255,255), width=2)
+            draw.rectangle([(0,0), (300,500)], fill=(255,255,255,100), outline=(255,255,255,255), width=2)
             draw.text((10,10), info, font=font_overlay, fill=(0,0,0,255))
 
             # サボタージュ状況をオーバーレイに描画
@@ -331,7 +332,7 @@ def main():
 
         # この日に追放されたプレイヤーを取得
         index = game['days'].index(day)
-        if index > 0:
+        if index > 0 and index+1 < len(game['days']):
             tomorrow = game['days'][index+1]
             counter = 0
             if len(tomorrow['exiledPlayers']) != 0:
