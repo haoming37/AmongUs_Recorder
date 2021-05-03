@@ -1,3 +1,4 @@
 [submodule "TheOtherRoles"]
 	path = TheOtherRoles
-	url = https://github.com/Eisbison/TheOtherRoles.git
+	url = https://github.com/haoming37/TheOtherRoles.git
+	branch = main
