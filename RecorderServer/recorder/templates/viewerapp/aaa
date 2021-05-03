@@ -1,0 +1,15 @@
+<script type="text/javascript">
+$('#table').bootstrapTable({
+  columns: [{
+    field: 'id',
+    title: 'ゲームID'
+  }, {
+    field: 'mapName',
+    title: 'マップ名'
+  }, {
+    field: 'time',
+    title: '時刻'
+  }],
+  data: {{data}} 
+})
+</script>

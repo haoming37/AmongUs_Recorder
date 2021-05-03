@@ -1,0 +1,149 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>リプレイ一覧</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+<!-- development version, includes helpful console warnings -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="app">
+<table class="table" width="800">
+  <thead>
+    <tr>
+      <th scope="col">ゲームID</th>
+      <th scope="col">マップ名</th>
+      <th scope="col">クルーメイト</th>
+      <th scope="col">インポスター</th>
+      <th scope="col">試合結果</th>
+      <th scope="col">開始時刻</th>
+    </tr>
+  </thead>
+  <tbody>
+  <tr v-for="game in games">
+    <td> {% templatetag openvariable %}game.id{% templatetag closevariable %} </td>
+    <td> {% templatetag openvariable %}game.mapName{% templatetag closevariable %} </td>
+    <td><div style="white-space:pre-wrap; word-wrap:break-word;">{% templatetag openvariable %}game.cplayersName{% templatetag closevariable %} </div> </td>
+    <td><div style="white-space:pre-wrap; word-wrap:break-word;">{% templatetag openvariable %}game.iplayersName{% templatetag closevariable %} </div> </td>
+    <td> {% templatetag openvariable %}game.matchResult{% templatetag closevariable %} </td>
+    <td> {% templatetag openvariable %}game.time{% templatetag closevariable %} </td>
+  </tr>
+  </tbody>
+</table>
+</div>
+
+<script>
+function isCrewmateWon(gameOverReason){
+  switch(gameOverReason){
+    case 0:
+      return true;
+    case 1:
+      return true;
+    case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+
+function isCrewmate(role){
+  switch(role){
+    case 'Impostor':
+      return false
+    case 'Vampire':
+      return false
+    case 'Camouflager':
+      return false
+    case 'Morphling':
+      return false
+    case 'Trickster':
+      return false
+    case 'Warlock':
+      return false
+    case 'Godfather':
+      return false
+    case 'Mafioso':
+      return false
+    case 'Janitor':
+      return false
+    case 'Cleaner':
+      return false
+    case 'Eraser':
+      return false
+    case 'BadChild':
+      return false
+    case 'ImpLover':
+      return false
+    case 'Jester':
+      return false
+    default:
+      return true
+  }
+}
+var url = "http://localhost:8000/recorder/games/"
+var app = new Vue({
+  el: '#app',
+  data(){
+    return{
+      games: null
+    }
+  },
+  mounted(){
+    axios.get(url).then(response => {this.games = response.data
+                                     this.games = this.games.reverse()
+
+                                     console.log('aaa')
+                                     for(var index in this.games)
+                                     {
+                                       // 日本時間に変換
+                                       var date = new Date(this.games[index]['time']).toLocaleString({ timeZone: 'Asia/Tokyo' })
+                                       this.games[index]['time'] = date.toString()
+                                       // マップ名から不要な文字を削除
+                                       var mapName = this.games[index]['mapName']
+                                       mapName = mapName.replace('\(Clone\)', '')
+                                       mapName = mapName.replace('Ship', '')
+                                       this.games[index]['mapName'] = mapName
+                                       // ゲーム結果登録
+                                       if("gameOverReason" in this.games[index]){
+                                        if(isCrewmateWon(this.games[index]['gameOverReason'])){
+                                          this.games[index]['matchResult'] = 'クルーメイト勝利'
+                                        }
+                                        else{
+                                          this.games[index]['matchResult'] = 'インポスター勝利'
+                                        }
+                                       }
+                                       // プレイヤー一覧登録
+                                       var cname = ""
+                                       var iname = ""
+                                       var game = this.games[index]
+                                       if('players' in game){
+                                         console.log(game['players'])
+                                         var players = JSON.parse(game['players'])
+                                         for(var pindex in players)
+                                         {
+                                             player = players[pindex]
+                                             console.log(JSON.stringify(player))
+                                             if(isCrewmate(player['role'])){
+                                               if(player['role'] != 'Crewmate'){
+                                                cname += player['name'] + "(" + player['role'] + ")\n"
+                                               }
+                                               else{
+                                                cname += player['name'] + "\n"
+                                               }
+                                             }
+                                             else{
+                                              iname += player['name'] + "(" + player['role'] + ")\n"
+                                             }
+                                         }
+                                       }
+                                       this.games[index]['cplayersName'] = cname
+                                       this.games[index]['iplayersName'] = iname
+                                     }
+                                    })
+  }
+})
+</script>
+</body>
+</html>
