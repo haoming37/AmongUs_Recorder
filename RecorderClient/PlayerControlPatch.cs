@@ -62,32 +62,26 @@ namespace RecorderClient {
                     {
                         if(task.TaskType == TaskTypes.FixComms)
                         {
-                            Recorder.LogInfo("FixComms");
                             cf.commsActive = true; 
                         }
                         else if(task.TaskType == TaskTypes.RestoreOxy)
                         {
-                            Recorder.LogInfo("RestoreOxy");
                             cf.oxyActive = true;
                         }
                         else if(task.TaskType == TaskTypes.ResetSeismic)
                         {
-                            Recorder.LogInfo("ResetSeismic");
                             cf.reactorActive = true;
                         }
                         else if(task.TaskType == TaskTypes.ResetReactor)
                         {
-                            Recorder.LogInfo("ResetReactor");
                             cf.reactorActive = true;
                         }
                         else if(task.TaskType == TaskTypes.StopCharles)
                         {
-                            Recorder.LogInfo("StopCharles");
                             cf.reactorActive = true;
                         }
                         else if(task.TaskType == TaskTypes.FixLights)
                         {
-                            Recorder.LogInfo("FixLights");
                             cf.lightsActive = true;
                         }
                     }

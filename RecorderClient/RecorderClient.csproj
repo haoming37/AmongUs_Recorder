@@ -10,12 +10,9 @@
     <RootNamespace>RecorderClient</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TheOtherRoles\Source Code\TheOtherRoles.csproj" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Reactor.OxygenFilter.MSBuild" Version="0.3.0">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    <ProjectReference Include="..\TheOtherRoles\Source Code\TheOtherRoles.csproj" />
+    <PackageReference Include="Reactor.OxygenFilter.MSBuild" Version="0.3.0" />
   </ItemGroup>
 
   <Target Name="CopyCustomContent" AfterTargets="Reobfuscate">
